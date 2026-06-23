@@ -1,21 +1,18 @@
-import { useState, useRef } from 'react'
-import { X, Download, Upload, Check, AlertCircle } from 'lucide-react'
+import { useState, useRef, useCallback } from 'react'
+import { X, Download, Upload, Check, AlertCircle, Cloud } from 'lucide-react'
+import { useProgress } from '../hooks/useProgress'
 
-interface SettingsModalProps {
-  open: boolean
-  onClose: () => void
-  onExport: () => string
-  onImport: (json: string) => boolean
-}
-
-export function SettingsModal({ open, onClose, onExport, onImport }: SettingsModalProps) {
+export function SettingsModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [importMessage, setImportMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [syncMessage, setSyncMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [syncing, setSyncing] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
+  const { exportProgress, importProgress, gistToken, setGistToken, saveToGist, loadFromGist } = useProgress()
 
   if (!open) return null
 
   const handleExport = () => {
-    const json = onExport()
+    const json = exportProgress()
     const blob = new Blob([json], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -26,28 +23,50 @@ export function SettingsModal({ open, onClose, onExport, onImport }: SettingsMod
     URL.revokeObjectURL(url)
   }
 
-  const handleImport = () => {
-    fileRef.current?.click()
-  }
+  const handleImport = () => fileRef.current?.click()
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-
     const reader = new FileReader()
     reader.onload = () => {
-      const json = reader.result as string
-      const success = onImport(json)
-      if (success) {
-        setImportMessage({ type: 'success', text: 'Progress restored!' })
-      } else {
-        setImportMessage({ type: 'error', text: 'Invalid file format.' })
-      }
+      const success = importProgress(reader.result as string)
+      setImportMessage(success
+        ? { type: 'success', text: 'Progress restored!' }
+        : { type: 'error', text: 'Invalid file format.' })
       setTimeout(() => setImportMessage(null), 3000)
     }
     reader.readAsText(file)
     e.target.value = ''
   }
+
+  const handleSave = useCallback(async () => {
+    setSyncing(true)
+    setSyncMessage(null)
+    try {
+      const result = await saveToGist()
+      setSyncMessage({ type: 'success', text: result === 'created' ? 'New Gist created!' : 'Gist updated!' })
+    } catch (err) {
+      setSyncMessage({ type: 'error', text: err instanceof Error ? err.message : 'Save failed' })
+    } finally {
+      setSyncing(false)
+      setTimeout(() => setSyncMessage(null), 4000)
+    }
+  }, [saveToGist])
+
+  const handleLoad = useCallback(async () => {
+    setSyncing(true)
+    setSyncMessage(null)
+    try {
+      await loadFromGist()
+      setSyncMessage({ type: 'success', text: 'Progress loaded from Gist!' })
+    } catch (err) {
+      setSyncMessage({ type: 'error', text: err instanceof Error ? err.message : 'Load failed' })
+    } finally {
+      setSyncing(false)
+      setTimeout(() => setSyncMessage(null), 4000)
+    }
+  }, [loadFromGist])
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/15 backdrop-blur-sm" onClick={onClose}>
@@ -66,10 +85,60 @@ export function SettingsModal({ open, onClose, onExport, onImport }: SettingsMod
         </div>
 
         <div className="p-5 space-y-5">
+          {/* Sync */}
+          <div>
+            <div className="flex items-center gap-1.5 mb-1">
+              <Cloud className="w-4 h-4 text-primary" />
+              <p className="text-[15px] font-semibold text-ink">Cloud Sync</p>
+            </div>
+            <p className="text-[14px] text-ink-muted leading-relaxed mb-3">
+              Sync progress across devices via GitHub Gist. Needs a token with <code className="text-primary text-[13px]">gist</code> scope.
+            </p>
+
+            <input
+              type="password"
+              value={gistToken}
+              onChange={(e) => setGistToken(e.target.value)}
+              placeholder="GitHub personal access token"
+              className="w-full px-3 py-2 text-[14px] bg-canvas border border-hairline rounded-lg text-ink placeholder:text-ink-faint outline-none focus:border-primary/50 transition-all mb-2"
+            />
+
+            <div className="flex gap-2">
+              <button
+                onClick={handleSave}
+                disabled={syncing || !gistToken}
+                className="flex-1 flex items-center justify-center gap-1.5 py-2 text-[14px] font-medium text-white bg-primary rounded-full hover:bg-primary-active disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.97] transition-all"
+              >
+                {syncing ? 'Saving...' : 'Save to Gist'}
+              </button>
+              <button
+                onClick={handleLoad}
+                disabled={syncing || !gistToken}
+                className="flex-1 flex items-center justify-center gap-1.5 py-2 text-[14px] font-medium text-ink bg-surface border border-hairline rounded-full hover:bg-canvas-soft disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.97] transition-all"
+              >
+                Load from Gist
+              </button>
+            </div>
+
+            {syncMessage && (
+              <div className={`flex items-center gap-2 mt-2 p-2.5 rounded-lg text-[13px] ${
+                syncMessage.type === 'success'
+                  ? 'bg-accent-green/10 text-accent-green'
+                  : 'bg-accent-orange/10 text-accent-orange'
+              }`}>
+                {syncMessage.type === 'success' ? <Check className="w-3.5 h-3.5 shrink-0" /> : <AlertCircle className="w-3.5 h-3.5 shrink-0" />}
+                {syncMessage.text}
+              </div>
+            )}
+          </div>
+
+          <div className="border-t border-hairline pt-5" />
+
+          {/* Backup */}
           <div>
             <p className="text-[15px] font-semibold text-ink mb-1">Backup Progress</p>
             <p className="text-[14px] text-ink-muted leading-relaxed mb-3">
-              Download a JSON file with all progress data. Keep it somewhere safe.
+              Download a JSON file with all progress data.
             </p>
             <button
               onClick={handleExport}
@@ -80,6 +149,7 @@ export function SettingsModal({ open, onClose, onExport, onImport }: SettingsMod
             </button>
           </div>
 
+          {/* Restore */}
           <div className="border-t border-hairline pt-5">
             <p className="text-[15px] font-semibold text-ink mb-1">Restore Progress</p>
             <p className="text-[14px] text-ink-muted leading-relaxed mb-3">
@@ -96,18 +166,12 @@ export function SettingsModal({ open, onClose, onExport, onImport }: SettingsMod
           </div>
 
           {importMessage && (
-            <div
-              className={`flex items-center gap-2 p-3 rounded-lg text-[14px] ${
-                importMessage.type === 'success'
-                  ? 'bg-accent-green/10 text-accent-green'
-                  : 'bg-accent-orange/10 text-accent-orange'
-              }`}
-            >
-              {importMessage.type === 'success' ? (
-                <Check className="w-4 h-4" />
-              ) : (
-                <AlertCircle className="w-4 h-4" />
-              )}
+            <div className={`flex items-center gap-2 p-3 rounded-lg text-[14px] ${
+              importMessage.type === 'success'
+                ? 'bg-accent-green/10 text-accent-green'
+                : 'bg-accent-orange/10 text-accent-orange'
+            }`}>
+              {importMessage.type === 'success' ? <Check className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
               {importMessage.text}
             </div>
           )}

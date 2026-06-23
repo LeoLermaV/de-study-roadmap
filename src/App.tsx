@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { phases, allTopics } from './data/roadmap'
-import { ProgressProvider, useProgress } from './hooks/useProgress'
+import { ProgressProvider } from './hooks/useProgress'
 import { useTheme } from './hooks/useTheme'
 import { Sidebar } from './components/Sidebar'
 import { TopicDetail } from './components/TopicDetail'
@@ -34,7 +34,6 @@ function AppContent() {
   const [mobileTopicOpen, setMobileTopicOpen] = useState(false)
   const [sidebarWidth, setSidebarWidth] = useState(loadWidth)
   const isResizing = useRef(false)
-  const { exportProgress, importProgress } = useProgress()
   const { theme, toggle: toggleTheme } = useTheme()
 
   const selectedTopic = selectedTopicId
@@ -116,8 +115,6 @@ function AppContent() {
       <SettingsModal
         open={settingsOpen}
         onClose={() => setSettingsOpen(false)}
-        onExport={exportProgress}
-        onImport={importProgress}
       />
     </div>
   )
