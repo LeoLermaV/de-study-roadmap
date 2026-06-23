@@ -9,6 +9,34 @@ export function SettingsModal({ open, onClose }: { open: boolean; onClose: () =>
   const fileRef = useRef<HTMLInputElement>(null)
   const { exportProgress, importProgress, gistToken, setGistToken, saveToGist, loadFromGist } = useProgress()
 
+  const handleSave = useCallback(async () => {
+    setSyncing(true)
+    setSyncMessage(null)
+    try {
+      const result = await saveToGist()
+      setSyncMessage({ type: 'success', text: result === 'created' ? 'New Gist created!' : 'Gist updated!' })
+    } catch (err) {
+      setSyncMessage({ type: 'error', text: err instanceof Error ? err.message : 'Save failed' })
+    } finally {
+      setSyncing(false)
+      setTimeout(() => setSyncMessage(null), 4000)
+    }
+  }, [saveToGist])
+
+  const handleLoad = useCallback(async () => {
+    setSyncing(true)
+    setSyncMessage(null)
+    try {
+      await loadFromGist()
+      setSyncMessage({ type: 'success', text: 'Progress loaded from Gist!' })
+    } catch (err) {
+      setSyncMessage({ type: 'error', text: err instanceof Error ? err.message : 'Load failed' })
+    } finally {
+      setSyncing(false)
+      setTimeout(() => setSyncMessage(null), 4000)
+    }
+  }, [loadFromGist])
+
   if (!open) return null
 
   const handleExport = () => {
@@ -39,34 +67,6 @@ export function SettingsModal({ open, onClose }: { open: boolean; onClose: () =>
     reader.readAsText(file)
     e.target.value = ''
   }
-
-  const handleSave = useCallback(async () => {
-    setSyncing(true)
-    setSyncMessage(null)
-    try {
-      const result = await saveToGist()
-      setSyncMessage({ type: 'success', text: result === 'created' ? 'New Gist created!' : 'Gist updated!' })
-    } catch (err) {
-      setSyncMessage({ type: 'error', text: err instanceof Error ? err.message : 'Save failed' })
-    } finally {
-      setSyncing(false)
-      setTimeout(() => setSyncMessage(null), 4000)
-    }
-  }, [saveToGist])
-
-  const handleLoad = useCallback(async () => {
-    setSyncing(true)
-    setSyncMessage(null)
-    try {
-      await loadFromGist()
-      setSyncMessage({ type: 'success', text: 'Progress loaded from Gist!' })
-    } catch (err) {
-      setSyncMessage({ type: 'error', text: err instanceof Error ? err.message : 'Load failed' })
-    } finally {
-      setSyncing(false)
-      setTimeout(() => setSyncMessage(null), 4000)
-    }
-  }, [loadFromGist])
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/15 backdrop-blur-sm" onClick={onClose}>
