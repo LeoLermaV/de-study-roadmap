@@ -5,8 +5,11 @@ import { useProgress } from '../hooks/useProgress'
 import { TopicRow } from './TopicRow'
 import { ProgressBar } from './ProgressBar'
 
+const SETTINGS_ID = '__settings__'
+
 const phaseStyling: Record<string, { dot: string }> = {
   'Foundations': { dot: 'bg-accent-purple' },
+  'Data Concepts': { dot: 'bg-accent-purple' },
   'Data Storage': { dot: 'bg-accent-sky' },
   'Data Processing': { dot: 'bg-accent-orange' },
   'Orchestration & Cloud': { dot: 'bg-accent-teal' },
@@ -20,7 +23,6 @@ interface SidebarProps {
   theme: 'light' | 'dark'
   onToggleTheme: () => void
   onSelectTopic: (topicId: string) => void
-  onOpenSettings: () => void
 }
 
 export function Sidebar({
@@ -30,7 +32,6 @@ export function Sidebar({
   theme,
   onToggleTheme,
   onSelectTopic,
-  onOpenSettings,
 }: SidebarProps) {
   const { getStatus, getDoneCount } = useProgress()
   const [searchQuery, setSearchQuery] = useState('')
@@ -70,22 +71,13 @@ export function Sidebar({
               DA Roadmap
             </h1>
           </div>
-          <div className="flex items-center gap-0.5">
-            <button
-              onClick={onToggleTheme}
-              className="p-1.5 rounded-md text-ink-faint hover:text-ink-secondary hover:bg-canvas-soft transition-colors"
-              title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
-            >
-              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-            </button>
-            <button
-              onClick={onOpenSettings}
-              className="p-1.5 rounded-md text-ink-faint hover:text-ink-secondary hover:bg-canvas-soft transition-colors"
-              title="Settings"
-            >
-              <Settings className="w-4 h-4" />
-            </button>
-          </div>
+          <button
+            onClick={onToggleTheme}
+            className="p-1.5 rounded-md text-ink-faint hover:text-ink-secondary hover:bg-canvas-soft transition-colors"
+            title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+          >
+            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
         </div>
 
         <div className="relative">
@@ -145,6 +137,24 @@ export function Sidebar({
           )
         })}
       </nav>
+
+      {/* Settings link */}
+      <div className="border-t border-hairline px-2 py-1">
+        <button
+          onClick={() => onSelectTopic(SETTINGS_ID)}
+          className={`
+            w-full flex items-center gap-3 px-3 py-[10px] text-left text-[15px]
+            transition-all duration-150 rounded-sm
+            ${selectedTopicId === SETTINGS_ID
+              ? 'bg-primary/[0.06] text-ink font-semibold'
+              : 'text-ink-secondary hover:bg-canvas-soft/70'
+            }
+          `}
+        >
+          <Settings className="w-4 h-4 shrink-0 text-ink-faint/50" />
+          <span>Settings</span>
+        </button>
+      </div>
     </aside>
   )
 }

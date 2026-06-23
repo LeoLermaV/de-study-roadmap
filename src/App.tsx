@@ -4,8 +4,9 @@ import { ProgressProvider } from './hooks/useProgress'
 import { useTheme } from './hooks/useTheme'
 import { Sidebar } from './components/Sidebar'
 import { TopicDetail } from './components/TopicDetail'
-import { SettingsModal } from './components/SettingsModal'
+import { SettingsPage } from './components/SettingsPage'
 
+const SETTINGS_ID = '__settings__'
 const WIDTH_KEY = 'de-roadmap-sidebar-width'
 const MIN_WIDTH = 240
 const MAX_WIDTH = 560
@@ -30,13 +31,13 @@ export default function App() {
 
 function AppContent() {
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null)
-  const [settingsOpen, setSettingsOpen] = useState(false)
   const [mobileTopicOpen, setMobileTopicOpen] = useState(false)
   const [sidebarWidth, setSidebarWidth] = useState(loadWidth)
   const isResizing = useRef(false)
   const { theme, toggle: toggleTheme } = useTheme()
 
-  const selectedTopic = selectedTopicId
+  const isSettings = selectedTopicId === SETTINGS_ID
+  const selectedTopic = selectedTopicId && !isSettings
     ? allTopics.find((t) => t.id === selectedTopicId) ?? null
     : null
 
@@ -93,11 +94,9 @@ function AppContent() {
           theme={theme}
           onToggleTheme={toggleTheme}
           onSelectTopic={handleSelectTopic}
-          onOpenSettings={() => setSettingsOpen(true)}
         />
       </div>
 
-      {/* Resize handle */}
       <div
         onMouseDown={handleMouseDown}
         className={`hidden md:block shrink-0 w-[5px] cursor-col-resize hover:bg-primary/30 active:bg-primary/50 transition-colors relative z-10 ${
@@ -106,16 +105,11 @@ function AppContent() {
       />
 
       <div className={`${!mobileTopicOpen && selectedTopic ? 'hidden' : 'flex'} md:flex flex-1 min-w-0`}>
-        <TopicDetail
-          topic={selectedTopic}
-          onBack={handleBack}
-        />
+        {isSettings
+          ? <SettingsPage />
+          : <TopicDetail topic={selectedTopic} onBack={handleBack} />
+        }
       </div>
-
-      <SettingsModal
-        open={settingsOpen}
-        onClose={() => setSettingsOpen(false)}
-      />
     </div>
   )
 }
