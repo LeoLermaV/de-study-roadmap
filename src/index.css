@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@theme {
+  --color-canvas: #ffffff;
+  --color-canvas-soft: #f6f5f4;
+  --color-surface: #ffffff;
+  --color-ink: #000000;
+  --color-ink-secondary: #31302e;
+  --color-ink-muted: #615d59;
+  --color-ink-faint: #a39e98;
+  --color-hairline: #e6e6e6;
+  --color-primary: #0075de;
+  --color-primary-active: #005bab;
+  --color-secondary: #213183;
+  --color-accent-sky: #62aef0;
+  --color-accent-purple: #d6b6f6;
+  --color-accent-purple-deep: #391c57;
+  --color-accent-pink: #ff64c8;
+  --color-accent-orange: #dd5b00;
+  --color-accent-orange-deep: #793400;
+  --color-accent-teal: #2a9d99;
+  --color-accent-green: #1aae39;
+  --color-accent-brown: #523410;
+  --font-sans: 'Inter', -apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --spacing-xxs: 4px;
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 28px;
+  --spacing-xxl: 32px;
+  --radius-xs: 4px;
+  --radius-sm: 5px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --shadow-notion: 0 0.175px 1.041px rgba(0,0,0,0.01), 0 0.8px 2.925px rgba(0,0,0,0.02), 0 2.025px 7.847px rgba(0,0,0,0.027), 0 4px 18px rgba(0,0,0,0.04);
+  --shadow-elevated: 0 1px 3px rgba(0,0,0,0.01), 0 2px 8px rgba(0,0,0,0.02), 0 4px 16px rgba(0,0,0,0.03), 0 8px 32px rgba(0,0,0,0.04), 0 23px 52px rgba(0,0,0,0.05);
+}
+
+.dark {
+  --color-canvas: #252525;
+  --color-canvas-soft: #1b1b1b;
+  --color-surface: #2a2a2a;
+  --color-ink: #e6e6e6;
+  --color-ink-secondary: #b8b6b2;
+  --color-ink-muted: #8a8782;
+  --color-ink-faint: #5a5652;
+  --color-hairline: #333333;
+  --color-primary: #4da3f5;
+  --color-primary-active: #0075de;
+  --color-secondary: #4a5ec7;
+  --color-accent-sky: #4ea1e8;
+  --color-accent-purple: #a082c4;
+  --color-accent-orange: #e0783d;
+  --color-accent-teal: #4ab5b0;
+  --color-accent-green: #4ec97e;
+  --shadow-notion: none;
+  --shadow-elevated: 0 1px 3px rgba(0,0,0,0.25), 0 4px 12px rgba(0,0,0,0.35), 0 8px 24px rgba(0,0,0,0.4);
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-canvas-soft);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-hairline);
+  border-radius: 2.5px;
+}
+
+.shadow-notion {
+  box-shadow: var(--shadow-notion);
+}
+
+.shadow-elevated {
+  box-shadow: var(--shadow-elevated);
+}
