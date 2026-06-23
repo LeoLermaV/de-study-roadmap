@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { ChevronDown, Search, Settings, BookOpen, Moon, Sun } from 'lucide-react'
+import { ChevronDown, Search, Settings, Moon, Sun } from 'lucide-react'
 import type { Phase, Topic } from '../types'
 import { useProgress } from '../hooks/useProgress'
 import { TopicRow } from './TopicRow'
@@ -64,8 +64,8 @@ export function Sidebar({
       <div className="px-4 pt-4 pb-3 border-b border-hairline">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center">
-              <BookOpen className="w-4 h-4 text-white" />
+            <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center overflow-hidden">
+              <img src="/de-study-roadmap/favicon.svg" className="w-5 h-5" alt="" />
             </div>
             <h1 className="text-[17px] font-bold text-ink tracking-[-0.125px]">
               DA Roadmap
