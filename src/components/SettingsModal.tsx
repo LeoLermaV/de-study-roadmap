@@ -71,7 +71,7 @@ export function SettingsModal({ open, onClose }: { open: boolean; onClose: () =>
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/15 backdrop-blur-sm" onClick={onClose}>
       <div
-        className="bg-surface rounded-xl border border-hairline w-full max-w-sm mx-4 shadow-elevated overflow-hidden"
+        className="bg-surface rounded-xl border border-hairline w-full max-w-sm mx-4 shadow-elevated overflow-hidden flex flex-col max-h-[85vh]"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-hairline">
@@ -84,7 +84,7 @@ export function SettingsModal({ open, onClose }: { open: boolean; onClose: () =>
           </button>
         </div>
 
-        <div className="p-5 space-y-5">
+        <div className="p-5 space-y-5 overflow-y-auto">
           {/* Sync */}
           <div>
             <div className="flex items-center gap-1.5 mb-1">
