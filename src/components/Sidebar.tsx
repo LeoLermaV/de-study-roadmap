@@ -4,7 +4,7 @@ import type { Phase, Topic } from '../types'
 import { useProgress } from '../hooks/useProgress'
 import { TopicRow } from './TopicRow'
 import { ProgressBar } from './ProgressBar'
-import faviconUrl from '/favicon.svg'
+import dogUrl from '/dog.svg'
 
 const SETTINGS_ID = '__settings__'
 
@@ -66,7 +66,7 @@ export function Sidebar({
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center overflow-hidden">
-              <img src={faviconUrl} className="w-5 h-5" alt="" />
+              <img src={dogUrl} className="w-5 h-5" alt="" />
             </div>
             <h1 className="text-[17px] font-bold text-ink tracking-[-0.125px]">
               DA Roadmap
