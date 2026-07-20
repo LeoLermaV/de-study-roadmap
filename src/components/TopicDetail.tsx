@@ -124,14 +124,22 @@ export function TopicDetail({ topic, onBack }: TopicDetailProps) {
               </h2>
             </div>
             <div className="p-5 bg-surface rounded-xl border border-hairline shadow-notion">
-              <ul className="space-y-2.5">
-                {topic.what.map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-[15px] text-ink-secondary leading-relaxed">
-                    <span className="w-[5px] h-[5px] rounded-full bg-primary/40 mt-[9px] shrink-0" />
-                    <MarkdownInline text={item} />
-                  </li>
-                ))}
-              </ul>
+              {topic.type === 'setup' ? (
+                <div className="space-y-4 text-[15px] text-ink-secondary">
+                  {topic.what.map((item) => (
+                    <MarkdownText key={item} text={item} />
+                  ))}
+                </div>
+              ) : (
+                <ul className="space-y-2.5">
+                  {topic.what.map((item) => (
+                    <li key={item} className="flex items-start gap-3 text-[15px] text-ink-secondary leading-relaxed">
+                      <span className="w-[5px] h-[5px] rounded-full bg-primary/40 mt-[9px] shrink-0" />
+                      <MarkdownInline text={item} />
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </section>
 
