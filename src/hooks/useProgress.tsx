@@ -27,6 +27,7 @@ interface ProgressContextValue {
   setStatus: (topicId: string, status: TopicStatus) => void
   getNotes: (topicId: string) => string
   setNotes: (topicId: string, notes: string) => void
+  markReviewed: (topicId: string) => void
   getDoneCount: (topics: Topic[]) => number
   getInProgressCount: (topics: Topic[]) => number
   exportProgress: () => string
@@ -79,6 +80,18 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     setProgress((prev) => ({
       ...prev,
       [topicId]: { ...prev[topicId], status: prev[topicId]?.status ?? 'not-started', notes },
+    }))
+  }, [])
+
+  const markReviewed = useCallback((topicId: string) => {
+    setProgress((prev) => ({
+      ...prev,
+      [topicId]: {
+        ...prev[topicId],
+        status: prev[topicId]?.status ?? 'not-started',
+        notes: prev[topicId]?.notes ?? '',
+        reviewedAt: Date.now(),
+      },
     }))
   }, [])
 
@@ -187,10 +200,10 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo(
     () => ({
-      progress, getStatus, setStatus, getNotes, setNotes, getDoneCount, getInProgressCount,
+      progress, getStatus, setStatus, getNotes, setNotes, markReviewed, getDoneCount, getInProgressCount,
       exportProgress, importProgress, gistToken, setGistToken, saveToGist, loadFromGist,
     }),
-    [progress, getStatus, setStatus, getNotes, setNotes, getDoneCount, getInProgressCount,
+    [progress, getStatus, setStatus, getNotes, setNotes, markReviewed, getDoneCount, getInProgressCount,
       exportProgress, importProgress, gistToken, setGistToken, saveToGist, loadFromGist],
   )
 

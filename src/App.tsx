@@ -5,8 +5,10 @@ import { useTheme } from './hooks/useTheme'
 import { Sidebar } from './components/Sidebar'
 import { TopicDetail } from './components/TopicDetail'
 import { SettingsPage } from './components/SettingsPage'
+import { ComplementaryPage } from './components/ComplementaryPage'
 
 const SETTINGS_ID = '__settings__'
+const COMPLEMENTARY_ID = '__complementary__'
 const WIDTH_KEY = 'de-roadmap-sidebar-width'
 const MIN_WIDTH = 240
 const MAX_WIDTH = 560
@@ -37,7 +39,8 @@ function AppContent() {
   const { theme, toggle: toggleTheme } = useTheme()
 
   const isSettings = selectedTopicId === SETTINGS_ID
-  const selectedTopic = selectedTopicId && !isSettings
+  const isComplementary = selectedTopicId === COMPLEMENTARY_ID
+  const selectedTopic = selectedTopicId && !isSettings && !isComplementary
     ? allTopics.find((t) => t.id === selectedTopicId) ?? null
     : null
 
@@ -106,7 +109,9 @@ function AppContent() {
 
       <div className={`${!mobileTopicOpen && selectedTopic ? 'hidden' : 'flex'} md:flex flex-1 min-w-0`}>
         {isSettings
-          ? <SettingsPage />
+          ? <SettingsPage onBack={handleBack} />
+          : isComplementary
+          ? <ComplementaryPage onSelectTopic={handleSelectTopic} onBack={handleBack} />
           : <TopicDetail topic={selectedTopic} onBack={handleBack} />
         }
       </div>
