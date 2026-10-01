@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { ChevronDown, Search, Settings, Moon, Sun } from 'lucide-react'
+import { ChevronDown, Search, Settings, Moon, Sun, Library } from 'lucide-react'
 import type { Phase, Topic } from '../types'
 import { useProgress } from '../hooks/useProgress'
 import { TopicRow } from './TopicRow'
@@ -7,6 +7,7 @@ import { ProgressBar } from './ProgressBar'
 import dogUrl from '/dog.svg'
 
 const SETTINGS_ID = '__settings__'
+const COMPLEMENTARY_ID = '__complementary__'
 
 const phaseStyling: Record<string, { dot: string }> = {
   'Foundations': { dot: 'bg-accent-purple' },
@@ -139,8 +140,22 @@ export function Sidebar({
         })}
       </nav>
 
-      {/* Settings link */}
+      {/* Complementary reading and settings links */}
       <div className="border-t border-hairline px-2 py-1">
+        <button
+          onClick={() => onSelectTopic(COMPLEMENTARY_ID)}
+          className={`
+            w-full flex items-center gap-3 px-3 py-[10px] text-left text-[15px]
+            transition-all duration-150 rounded-sm
+            ${selectedTopicId === COMPLEMENTARY_ID
+              ? 'bg-primary/[0.06] text-ink font-semibold'
+              : 'text-ink-secondary hover:bg-canvas-soft/70'
+            }
+          `}
+        >
+          <Library className="w-4 h-4 shrink-0 text-ink-faint/50" />
+          <span>Complementary reading</span>
+        </button>
         <button
           onClick={() => onSelectTopic(SETTINGS_ID)}
           className={`

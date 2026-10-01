@@ -1,8 +1,8 @@
 import { useState, useRef, useCallback } from 'react'
-import { Download, Upload, Check, AlertCircle, Cloud } from 'lucide-react'
+import { ArrowLeft, Download, Upload, Check, AlertCircle, Cloud } from 'lucide-react'
 import { useProgress } from '../hooks/useProgress'
 
-export function SettingsPage() {
+export function SettingsPage({ onBack }: { onBack?: () => void }) {
   const [importMessage, setImportMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [syncMessage, setSyncMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [syncing, setSyncing] = useState(false)
@@ -69,6 +69,16 @@ export function SettingsPage() {
   return (
     <div className="flex-1 overflow-y-auto bg-canvas-soft">
       <div className="max-w-2xl mx-auto p-6 md:p-8 lg:p-10">
+        {onBack && (
+          <button
+            onClick={onBack}
+            className="flex items-center gap-1.5 text-[14px] text-ink-muted hover:text-ink-secondary mb-4 transition-colors md:hidden"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back
+          </button>
+        )}
+
         <h1 className="text-[26px] font-bold text-ink tracking-[-0.625px] leading-tight mb-8">
           Settings
         </h1>

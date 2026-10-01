@@ -27,8 +27,9 @@ npm run lint     # eslint
 ## Architecture
 
 - `src/data/roadmap.ts` — the entire content of the app. Seven phases of `Topic` objects built with the `t()` and `r()` helpers at the top of the file. Each topic carries `why` (long prose), `what` (bullet array), `where` (why it sits at this point in the roadmap), and `resources`. Prose is markdown-ish and rendered by `MarkdownText.tsx`, which supports only `**bold**`, `` `code` ``, and links — do not use other markdown syntax in content strings.
-- `src/hooks/useProgress.tsx` — context provider owning all progress state. Writes to `localStorage` on every change; `saveToGist`/`loadFromGist` talk to the GitHub Gists API with a user-supplied PAT. Both import paths validate shape before accepting data.
-- `src/App.tsx` — layout, sidebar resize, and routing. There is no router: `selectedTopicId` is a single piece of state, and the sentinel `'__settings__'` selects the settings page instead of a topic.
+- `src/data/complementary.ts` — content for the Complementary reading page (`ComplementaryPage.tsx`): optional reading topics that sit outside the roadmap and never count towards progress. It was generated from the reviewed drafts in `research/complementary/`; the app reads only the `.ts` file, so edit it directly and keep the drafts in step if they still matter. `buildsOn`/`helpsWith` hold roadmap topic ids or other complementary ids.
+- `src/hooks/useProgress.tsx` — context provider owning all progress state. Besides roadmap topic ids, progress also stores `reviewedAt` (the Re-read tick) and complementary read state under `complementary:<id>` keys; neither affects the progress bar. Writes to `localStorage` on every change; `saveToGist`/`loadFromGist` talk to the GitHub Gists API with a user-supplied PAT. Both import paths validate shape before accepting data.
+- `src/App.tsx` — layout, sidebar resize, and routing. There is no router: `selectedTopicId` is a single piece of state, and the sentinels `'__settings__'` and `'__complementary__'` select the settings and complementary reading pages instead of a topic.
 - `src/index.css` — the design system, as Tailwind v4 `@theme` tokens plus a `.dark` override block. Colors, spacing, radii, and shadows all live here.
 
 ## Conventions
@@ -42,6 +43,8 @@ npm run lint     # eslint
 ## Known state
 
 `src/components/SettingsModal.tsx` is dead code, superseded by `SettingsPage.tsx`. Leave it unless asked.
+
+`npm run lint` reports one long-standing error: `react-refresh/only-export-components` on `useProgress` in `src/hooks/useProgress.tsx`, because the file exports both the provider and the hook. Any other lint error is new.
 
 ## Verification
 

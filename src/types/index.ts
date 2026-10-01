@@ -28,11 +28,37 @@ export interface Phase {
   topics: Topic[]
 }
 
+export type ReadingFormat = 'read' | 'watch' | 'listen' | 'listen-or-read' | 'look' | 'try' | 'keep'
+
+export interface ReadingItem {
+  format: ReadingFormat
+  time: string
+  nz?: boolean
+  text: string
+  parts?: string[]
+}
+
+export interface ComplementaryTopic {
+  id: string
+  title: string
+  startMinutes: number
+  easiestWayIn: string
+  buildsOn: string[]
+  helpsWith: string[]
+  why: string
+  keyIdeas: string[]
+  connects: string
+  notice: string
+  startHere: ReadingItem[]
+  more: ReadingItem[]
+}
+
 export interface UserProgress {
   [topicId: string]: {
     status: TopicStatus
     notes: string
     startedAt?: number
     completedAt?: number
+    reviewedAt?: number
   }
 }
